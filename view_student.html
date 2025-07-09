@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Shedule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 50px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .search-input {
+            width: 80%;
+            max-width: 500px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #007BFF; /* Optional: change to match your theme */
+        }
+
+        .card-container {
+            display: flex;
+            flex-direction: row; /* Default is row, so optional */
+            gap: 16px; /* spacing between cards */
+            overflow-x: auto; /* horizontal scroll if cards overflow */
+            padding: 16px;
+        }
+
+        .profile-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        width: 320px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        position: relative;
+        padding-top: 40px; 
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn, .delete-btn {
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .profile-info {
+            padding: 25px;
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 500;
+            min-height: 24px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .button-container {
+            padding: 20px 25px 25px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .profile-button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-schedule-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .view-schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .set-schedule-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .set-schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+        }
+
+         /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .student-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .schedule-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .selection-section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            appearance: none;
+            height: auto;
+        }
+
+
+        .modal-footer {
+            padding: 1.5rem 2rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .modal-btn-save {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .modal-btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            padding: 2rem;
+            animation: slideUp 0.3s ease;
+        }
+
+        .form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none; /* hidden by default */
+            align-items: center;
+            justify-content: center;
+            z-index: 999; /* just under modal */
+            animation: fadeIn 0.3s ease;
+        }
+
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Subject Selection */
+        .subject-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            padding-right: 3rem;
+        }
+
+        .subject-select:focus {
+            border-color: #667eea;
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            background: transparent;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #e74c3c;
+            transform: scale(1.2);
+        }
+
+        /* Ensure the form container is positioned properly */
+        .form-container {
+            position: relative;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+
+        /* Form Row for responsive layout */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+            }
+
+            .form-title {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .days-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 0.5rem;
+            }
+
+            .day-label {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .form-title {
+                font-size: 1.8rem;
+            }
+
+            .days-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Success indicator styles */
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-note {
+            font-size: 0.875rem;
+            color: #64748b;
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .modal {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            .time-slots {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                width: 90%;
+                max-width: 320px;
+                padding-top: 60px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            .profile-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card-actions {
+                top: 5px;
+                right: 5px;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
+            }
+
+            .edit-btn, .delete-btn {
+                padding: 5px 10px;
+                font-size: 13px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            📚 EduAdmin
+        </div>
+        <div class="navbar-right">
+            <div class="search-section">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search tasks..." onkeyup="search()">
+            </div>
+            <div class="admin-info">
+                <div class="admin-avatar">A</div>
+                <span>Admin User</span>
+            </div>
+            <a href="#" class="logout-btn">
+                🚪 Logout
+            </a>
+        </div>
+    </nav>  
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Set Schedule</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="student-name" class="student-name"></div>
+                <form id="schedule-form" class="schedule-form" onsubmit="event.preventDefault(); set_schedule()">
+                    <!-- Days Selection Dropdown -->
+                    <input id="contact" hidden>
+                    <div class="selection-section">
+                        <div class="section-header">Select Days</div>
+                        <select id="days-select" name="days" class="custom-select">
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                            <option value="saturday">Saturday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
+
+                    <!-- Time Slots Selection Dropdown -->
+                    <div class="selection-section">
+                        <div class="section-header">Select Time Slots</div>
+                        <select id="times-select" name="times" class="custom-select">
+                            <option value="6:00 AM - 8:00 AM">6:00 AM - 8:00 AM</option>
+                            <option value="8:00 AM - 10:00 AM">8:00 AM - 10:00 AM</option>
+                            <option value="4:00 PM - 6:00 PM">4:00 PM - 6:00 PM</option>
+                            <option value="6:00 PM - 8:00 PM">6:00 PM - 8:00 PM</option>
+                            <option value="8:00 PM - 10:00 PM">8:00 PM - 10:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="modal-btn modal-btn-save">Save Schedule</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="form-overlay" id="form-overlay" >
+        <main class="main-content" id="main-content">
+            <div class="form-container">
+                <button class="close-btn" onclick="closeForm()">&times;</button>
+                <div class="form-header">
+                    <h1 class="form-title">Update Student Information</h1>
+                </div>
+
+                <form class="registration-form" onsubmit="event.preventDefault(); update()">
+                    <!-- Name and Email Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Full Name <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                class="form-input" 
+                                placeholder="Enter your full name"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="Enter your email"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Contact and Subject Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact" class="form-label">Contact Number <span class="required">*</span></label>
+                            <input 
+                                type="number" 
+                                id="contact1" 
+                                name="contact" 
+                                class="form-input" 
+                                placeholder="Enter your phone number"
+                                readonly
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="subject" class="form-label">Subject <span class="required">*</span></label>
+                            <select id="subject" name="subject" class="subject-select" required>
+                                <option value="">Select a subject</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="physics">Physics</option>
+                                <option value="chemistry">Chemistry</option>
+                                <option value="biology">Biology</option>
+                                <option value="english">English</option>
+                                <option value="history">History</option>
+                                <option value="geography">Geography</option>
+                                <option value="computer-science">Computer Science</option>
+                                <option value="economics">Economics</option>
+                                <option value="psychology">Psychology</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Starting Date -->
+                    <div class="form-group">
+                        <label for="start-date" class="form-label">Starting Date <span class="required">*</span></label>
+                        <input 
+                            type="date" 
+                            id="start-date" 
+                            name="start_date" 
+                            class="form-input"
+                            required
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn">
+                        📚 Update Student Information
+                    </button>
+
+                    <p class="form-note">
+                        All fields marked with <span class="required">*</span> are required
+                    </p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="card-container" class="card-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let studentIndex = -1;
+        
+
+        window.addEventListener('load', display);
+
+        function display()
+        {
+            var allstudent = JSON.parse(localStorage.getItem("allstudent"))
+            let temp = ""
+
+            for(i=0 ; i<allstudent.length; i++)
+            {
+                temp += `
+                    <div class="profile-card">
+                        <div class="card-actions">
+                            <button class="edit-btn" onclick="editForm(${i})">✏️ Edit</button>
+                            <button class="delete-btn" onclick="deletestudent(${i})">🗑️ Delete</button>
+                        </div>
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <div class="info-label">Name</div>
+                                <div class="info-value">${allstudent[i].name}</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">${allstudent[i].email}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="button-container">
+                            <button class="profile-button view-schedule-btn" onclick="open_schedule(${i})">View Schedule</button>
+                            <button class="profile-button set-schedule-btn" onclick="openmodal(${i})">Set Schedule</button>
+                        </div>
+                    </div>
+                `
+            }
+            document.getElementById('card-container').innerHTML = temp
+        }
+
+        function openmodal(index)
+        {
+            var allstudent = JSON.parse(localStorage.getItem("allstudent"))
+            studentIndex = index;
+            const student = allstudent[studentIndex];
+            document.getElementById('student-name').textContent = `Setting schedule for: ${student.name}`;
+            document.getElementById('contact').value = `${student.contact}`;
+    
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function set_schedule()
+        {
+            let contact = document.getElementById('contact').value
+            let day = document.getElementById('days-select').value
+            let time = document.getElementById('times-select').value
+
+            let schedule = {
+                "contact":contact,
+                "day": day,
+                "time":time,
+            }
+            if(localStorage.getItem('allschedule'))
+            {
+                let allschedule = JSON.parse(localStorage.getItem('allschedule'))
+                allschedule.push(schedule)
+                localStorage.setItem("allschedule", JSON.stringify(allschedule))
+            }
+            else
+            {
+                let allschedule = []
+                allschedule.push(schedule)
+                localStorage.setItem("allschedule", JSON.stringify(allschedule))
+            }
+            
+            Swal.fire({
+                title: "The student has been added",
+                icon: "success",
+                draggable: true               
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function editForm(index) {
+            var allstudent = JSON.parse(localStorage.getItem("allstudent"))
+            studentIndex = index;
+            const student = allstudent[studentIndex];
+            document.getElementById('name').value = `${student.name}`;
+            document.getElementById('email').value = `${student.email}`;
+            document.getElementById('contact1').value = `${student.contact}`;
+            document.getElementById('subject').value = `${student.subject}`;
+            document.getElementById('start-date').value = `${student.start_date}`;
+            document.getElementById('form-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function update()
+        {
+            let name = document.getElementById('name').value
+            let email = document.getElementById('email').value
+            let contact = document.getElementById('contact1').value
+            let subject = document.getElementById('subject').value
+            let start_date = document.getElementById('start-date').value 
+
+            let student1 = {
+                "name":name,
+                "email":email,
+                "contact": contact,
+                "subject":subject,
+                "start_date":start_date,
+            }
+            let allstudent = JSON.parse(localStorage.getItem('allstudent'))
+            for(i=0; i <allstudent.length; i++)
+            {
+                if(allstudent[i].contact == contact)
+                {
+                    studentIndex = i
+                }
+            }
+            allstudent[studentIndex] = student1          
+            localStorage.setItem("allstudent", JSON.stringify(allstudent))
+            Swal.fire({
+                position: "middle-center",
+                icon: "success",
+                title: "Student information has been updated",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        function closeForm() {
+            document.getElementById('form-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function deletestudent(index)
+        {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    let allstudent = JSON.parse(localStorage.getItem('allstudent'))
+                    let allschedule = JSON.parse(localStorage.getItem('allschedule'))
+                    studentIndex = index
+                    let contact = allstudent[studentIndex].contact
+
+                    for(i=0; i<allschedule.length; i++)
+                    {
+                        if(allschedule[i].contact == contact)
+                        {
+                            allschedule.splice(i, 1)
+                        }
+                    }
+
+                    localStorage.setItem("allschedule", JSON.stringify(allschedule))
+
+                    allstudent.splice(index, 1)
+                    localStorage.setItem("allstudent", JSON.stringify(allstudent))
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "The student information has been deleted.",
+                        icon: "success"
+                    });
+                    display()
+                }
+            })        
+        }
+
+        function open_schedule(index)
+        {
+            studentIndex = index
+            localStorage.setItem("studentIndex", studentIndex);
+            window.location.href = "view_schedule.html";
+        }
+
+        function search()
+        {
+            let allstudent = JSON.parse(localStorage.getItem('allstudent'))
+            let search = document.getElementById('searchInput').value
+
+            temp = ""
+            for(let i=0; i<allstudent.length; i++)
+            {
+                if(allstudent[i].name.toLowerCase().indexOf(search) > -1)
+                {
+                    temp+=`
+                        <div class="profile-card">
+                            <div class="card-actions">
+                                <button class="edit-btn" onclick="editForm(${i})">✏️ Edit</button>
+                                <button class="delete-btn" onclick="deletestudent(${i})">🗑️ Delete</button>
+                            </div>
+                            <div class="profile-info">
+                                <div class="info-item">
+                                    <div class="info-label">Name</div>
+                                    <div class="info-value">${allstudent[i].name}</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value">${allstudent[i].email}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="button-container">
+                                <button class="profile-button view-schedule-btn" onclick="open_schedule(${i})">View Schedule</button>
+                                <button class="profile-button set-schedule-btn" onclick="openmodal(${i})">Set Schedule</button>
+                            </div>
+                        </div>
+                    `
+                }
+            } 
+            document.getElementById('card-container').innerHTML = temp
+        }
+
+    </script>
+    
+</body>
+</html>
