@@ -114,14 +114,14 @@
         }
 
         .profile-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        width: 320px;
-        overflow: hidden;
-        transition: transform 0.3s ease;
-        position: relative;
-        padding-top: 40px; 
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            position: relative;
+            padding-top: 40px; 
         }
 
         .profile-card:hover {
@@ -640,6 +640,33 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .navbar-right {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+            .card-container {
+                scroll-snap-type: x mandatory;
+            }
+
+            .profile-card {
+                scroll-snap-align: start;
+                min-width: 280px;
+            }
+
+        }
+
+        @media (max-width: 768px) {
             .modal {
                 width: 95%;
                 margin: 1rem;
@@ -660,6 +687,12 @@
             .modal-btn {
                 width: 100%;
             }
+
+            .modal-body {
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
         }
 
         @media (max-width: 480px) {
@@ -692,6 +725,28 @@
                 font-size: 13px;
             }
         }
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-input,
+            .subject-select,
+            .custom-select,
+            .submit-btn {
+                font-size: 1rem;
+                padding: 0.9rem;
+            }
+
+            .submit-btn {
+                font-size: 1rem;
+            }
+
+            .card-container {
+                scroll-behavior: smooth;
+            }
+        }
+
 
     </style>
 </head>
@@ -1014,16 +1069,18 @@
                     studentIndex = index
                     let contact = allstudent[studentIndex].contact
 
-                    for(i=0; i<allschedule.length; i++)
+                    if(allschedule.length > 0)
                     {
-                        if(allschedule[i].contact == contact)
+                        for(i=0; i<allschedule.length; i++)
                         {
-                            allschedule.splice(i, 1)
+                            if(allschedule[i].contact == contact)
+                            {
+                                allschedule.splice(i, 1)
+                            }
                         }
-                    }
-
                     localStorage.setItem("allschedule", JSON.stringify(allschedule))
-
+                    }
+                    
                     allstudent.splice(index, 1)
                     localStorage.setItem("allstudent", JSON.stringify(allstudent))
                     Swal.fire({
