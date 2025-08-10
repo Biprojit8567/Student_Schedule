@@ -1,5 +1,5 @@
 # Student_Schedule
-This is my first JavaScript complete project
+This is my first JavaScript complete project.   
 webpage link : https://biprojit8567.github.io/Student_Schedule/
 email : abc@gmail.com
 password : 12345
